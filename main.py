@@ -1,3 +1,7 @@
+from validaciones import validar_longitud, validar_columna, validar_fila
+
+from posiciones import fila_piezas_negras, fila_piezas_blancas
+
 def crear_tablero():
     matriz = []
     for i in range(8):
@@ -7,38 +11,12 @@ def crear_tablero():
     return matriz
 
 def posicion_inicial(tablero):
-    for i in range(8):
-        for j in range(8):
-            if i == 0:
-                if j == 0 or j == 7:
-                    tablero[i][j] = "tN"
-                elif j == 1 or j == 6:
-                    tablero[i][j] = "cN"
-                elif j == 2 or j == 5:
-                    tablero[i][j] = "aN"
-                elif j == 3:
-                    tablero[i][j] = "dN"
-                else:
-                    tablero[i][j] = "rN"
-
-            elif i == 1:
-                tablero[i][j] = "pN"
-
-            elif i == 6:
-                tablero[i][j] = "pB"
-
-            elif i == 7:
-                if j == 0 or j == 7:
-                    tablero[i][j] = "tB"
-                elif j == 1 or j == 6:
-                    tablero[i][j] = "cB"
-                elif j == 2 or j == 5:
-                    tablero[i][j] = "aB"
-                elif j == 3:
-                    tablero[i][j] = "dB"
-                else:
-                    tablero[i][j] = "rB"
+    tablero[0] = list(fila_piezas_negras)
+    tablero[1] = ["pN"] * 8
+    tablero[6] = ["pB"] * 8
+    tablero[7] = list(fila_piezas_blancas)
     return tablero
+
 
 def mostrar_tablero(tablero):
     letras = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -57,7 +35,7 @@ def mostrar_tablero(tablero):
 
 
 def pieza_a_mover(letra):                      # Valida si la pieza a mover está dentro de los parametros del tablero y el formato,
-    piezas_posibles = ["T", "C", "A", "D", "R", "P"]    # pero no corroborra si realmente está en esa posición.
+    piezas_posibles = ("T", "C", "A", "D", "R", "P")
     while True:
         pos_pieza = input("Ingrese la inicial y la posición de la pieza que quiere mover (ejemplo: Cb1): ")
         if len(pos_pieza) != 3:
@@ -85,8 +63,8 @@ def mover_rey(tablero, letra, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]
     fila_inicial = 8 - int(pos_inicial[2])
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
 
     pieza = tablero[fila_inicial][col_inicial]
 
@@ -334,7 +312,7 @@ def mover_caballo(tablero, letra, pos_inicial, pos_final, turno):
     delta_fila = abs(fila_final - fila_inicial)
     delta_col = abs(col_final - col_inicial)
 
-    if (delta_fila == 2 and delta_col == 1) or (delta_fila == 1 and delta_col == 2):
+    if (delta_fila, delta_col) in ((2, 1), (1, 2)):
         # Movimiento válido: actualizar el tablero
         tablero[fila_final][col_final] = pieza
         tablero[fila_inicial][col_inicial] = "."
@@ -361,14 +339,15 @@ def posibles_movimientos(posicion_pieza, tablero):     # Deriva a la función co
 def coordenadas_a_mover(letra):
     while True:
         movimiento = input("Ingrese la casilla a la que quiere mover (ejemplo: e5): ")
-        if len(movimiento) != 2:
+        if not validar_longitud(movimiento):
             print("Error: La longitud de la entrada debe ser 2.")
-        elif movimiento[0].lower() not in letra:
+        elif not validar_columna(movimiento, letra):
             print("Error: Columna inválida.")
-        elif not movimiento[1].isdigit() or int(movimiento[1]) < 1 or int(movimiento[1]) > 8:
+        elif not validar_fila(movimiento):
             print("Error: Fila inválida.")
         else:
-            return movimiento  # Devuelve el string tipo "e5"
+            return letra.get(movimiento[0]), 8 - int(movimiento[1])
+
 
 
     return letra.get(movimiento[0]), movimiento[1]
