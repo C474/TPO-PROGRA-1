@@ -94,8 +94,9 @@ def mover_peon(tablero, letra, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]  # CAMBIO AQUÍ
     fila_inicial = 8 - int(pos_inicial[2])       # CAMBIO AQUÍ
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
+
 
     pieza = tablero[fila_inicial][col_inicial]
 
@@ -374,8 +375,8 @@ def init():
     # Pedimos movimientos
     pieza_inicial = pieza_a_mover(letra)      # <<< CAMBIÉ NOMBRE
     coordenada_destino = coordenadas_a_mover(letra)
-    tablero[6][3]='.'
-    mover_rey(tablero, letra, pieza_inicial, coordenada_destino, turno)
+    # tablero[6][]='.'
+    mover_peon(tablero, letra, pieza_inicial, coordenada_destino, turno)
     mostrar_tablero(tablero)
 
     # contador = 0
