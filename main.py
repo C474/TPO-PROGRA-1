@@ -1,5 +1,7 @@
 from validaciones import validar_longitud, validar_columna, validar_fila
 
+from posiciones import fila_piezas_negras, fila_piezas_blancas
+
 def crear_tablero():
     matriz = []
     for i in range(8):
@@ -9,38 +11,12 @@ def crear_tablero():
     return matriz
 
 def posicion_inicial(tablero):
-    for i in range(8):
-        for j in range(8):
-            if i == 0:
-                if j == 0 or j == 7:
-                    tablero[i][j] = "tN"
-                elif j == 1 or j == 6:
-                    tablero[i][j] = "cN"
-                elif j == 2 or j == 5:
-                    tablero[i][j] = "aN"
-                elif j == 3:
-                    tablero[i][j] = "dN"
-                else:
-                    tablero[i][j] = "rN"
-
-            elif i == 1:
-                tablero[i][j] = "pN"
-
-            elif i == 6:
-                tablero[i][j] = "pB"
-
-            elif i == 7:
-                if j == 0 or j == 7:
-                    tablero[i][j] = "tB"
-                elif j == 1 or j == 6:
-                    tablero[i][j] = "cB"
-                elif j == 2 or j == 5:
-                    tablero[i][j] = "aB"
-                elif j == 3:
-                    tablero[i][j] = "dB"
-                else:
-                    tablero[i][j] = "rB"
+    tablero[0] = list(fila_piezas_negras)
+    tablero[1] = ["pN"] * 8
+    tablero[6] = ["pB"] * 8
+    tablero[7] = list(fila_piezas_blancas)
     return tablero
+
 
 def mostrar_tablero(tablero):
     letras = ["a", "b", "c", "d", "e", "f", "g", "h"]
@@ -59,7 +35,7 @@ def mostrar_tablero(tablero):
 
 
 def pieza_a_mover(letra):                      # Valida si la pieza a mover está dentro de los parametros del tablero y el formato,
-    piezas_posibles = ["T", "C", "A", "D", "R", "P"]    # pero no corroborra si realmente está en esa posición.
+    piezas_posibles = ("T", "C", "A", "D", "R", "P")
     while True:
         pos_pieza = input("Ingrese la inicial y la posición de la pieza que quiere mover (ejemplo: Cb1): ")
         if len(pos_pieza) != 3:
@@ -335,7 +311,7 @@ def mover_caballo(tablero, letra, pos_inicial, pos_final, turno):
     delta_fila = abs(fila_final - fila_inicial)
     delta_col = abs(col_final - col_inicial)
 
-    if (delta_fila == 2 and delta_col == 1) or (delta_fila == 1 and delta_col == 2):
+    if (delta_fila, delta_col) in ((2, 1), (1, 2)):
         # Movimiento válido: actualizar el tablero
         tablero[fila_final][col_final] = pieza
         tablero[fila_inicial][col_inicial] = "."
