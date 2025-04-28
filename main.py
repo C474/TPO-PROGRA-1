@@ -1,3 +1,5 @@
+from validaciones import validar_longitud, validar_columna, validar_fila
+
 def crear_tablero():
     matriz = []
     for i in range(8):
@@ -85,8 +87,8 @@ def mover_rey(tablero, letra, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]
     fila_inicial = 8 - int(pos_inicial[2])
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
 
     pieza = tablero[fila_inicial][col_inicial]
 
@@ -360,14 +362,15 @@ def posibles_movimientos(posicion_pieza, tablero):     # Deriva a la función co
 def coordenadas_a_mover(letra):
     while True:
         movimiento = input("Ingrese la casilla a la que quiere mover (ejemplo: e5): ")
-        if len(movimiento) != 2:
+        if not validar_longitud(movimiento):
             print("Error: La longitud de la entrada debe ser 2.")
-        elif movimiento[0].lower() not in letra:
+        elif not validar_columna(movimiento, letra):
             print("Error: Columna inválida.")
-        elif not movimiento[1].isdigit() or int(movimiento[1]) < 1 or int(movimiento[1]) > 8:
+        elif not validar_fila(movimiento):
             print("Error: Fila inválida.")
         else:
-            return movimiento  # Devuelve el string tipo "e5"
+            return letra.get(movimiento[0]), 8 - int(movimiento[1])
+
 
 
     return letra.get(movimiento[0]), movimiento[1]
