@@ -34,8 +34,8 @@ def mostrar_tablero(tablero):
     print()
 
 
-def pieza_a_mover(letra):                      # Valida si la pieza a mover está dentro de los parametros del tablero y el formato,
-    piezas_posibles = ("T", "C", "A", "D", "R", "P")
+def pieza_a_mover(letra):    # Valida si la pieza a mover está dentro de los parametros del tablero,
+    piezas_posibles = ("T", "C", "A", "D", "R", "P")                        # y el formato.
     while True:
         pos_pieza = input("Ingrese la inicial y la posición de la pieza que quiere mover (ejemplo: Cb1): ")
         if len(pos_pieza) != 3:
@@ -68,14 +68,6 @@ def mover_rey(tablero, letra, pos_inicial, pos_final, turno):
 
     pieza = tablero[fila_inicial][col_inicial]
 
-    # Verificar que sea un rey del turno correcto
-    if turno == "blancas" and pieza != "rB":
-        print("No hay un rey blanco en la posición inicial.")
-        return False
-    if turno == "negras" and pieza != "rN":
-        print("No hay un rey negro en la posición inicial.")
-        return False
-
     # Verificar que el movimiento sea de una sola casilla en cualquier dirección
     delta_fila = abs(fila_final - fila_inicial)
     delta_col = abs(col_final - col_inicial)
@@ -91,22 +83,14 @@ def mover_rey(tablero, letra, pos_inicial, pos_final, turno):
 
 
 def mover_peon(tablero, letra, pos_inicial, pos_final, turno):
-    col_inicial = letra[pos_inicial[1].lower()]  # CAMBIO AQUÍ
-    fila_inicial = 8 - int(pos_inicial[2])       # CAMBIO AQUÍ
+    col_inicial = letra[pos_inicial[1].lower()]  
+    fila_inicial = 8 - int(pos_inicial[2])       
 
     col_final = pos_final[0]
     fila_final = pos_final[1]
 
 
     pieza = tablero[fila_inicial][col_inicial]
-
-    # Verificamos que la pieza sea un peón del turno correcto
-    if turno == "blancas" and pieza != "pB":
-        print("No hay un peón blanco en la posición inicial.")
-        return False
-    if turno == "negras" and pieza != "pN":
-        print("No hay un peón negro en la posición inicial.")
-        return False
 
     # Movimiento permitido para peones blancos (suben filas)
     if turno == "blancas":
@@ -115,6 +99,8 @@ def mover_peon(tablero, letra, pos_inicial, pos_final, turno):
                 tablero[fila_final][col_final] = "pB"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
+
+            # En el primer movimiento del peon puede avanzar 2 casillas
             elif fila_inicial == 6 and fila_final == fila_inicial - 2 and tablero[fila_inicial-1][col_inicial] == "." and tablero[fila_final][col_final] == ".":
                 tablero[fila_final][col_final] = "pB"
                 tablero[fila_inicial][col_inicial] = "."
@@ -133,6 +119,8 @@ def mover_peon(tablero, letra, pos_inicial, pos_final, turno):
                 tablero[fila_final][col_final] = "pN"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
+
+            # En el primer movimiento del peon puede avanzar 2 casillas
             elif fila_inicial == 1 and fila_final == fila_inicial + 2 and tablero[fila_inicial+1][col_inicial] == "." and tablero[fila_final][col_final] == ".":
                 tablero[fila_final][col_final] = "pN"
                 tablero[fila_inicial][col_inicial] = "."
@@ -154,14 +142,6 @@ def mover_torre(tablero, letra, pos_inicial, pos_final, turno):
     fila_final = 8 - int(pos_final[1])
 
     pieza = tablero[fila_inicial][col_inicial]
-
-    # Verificamos que la pieza sea una torre del turno correcto
-    if turno == "blancas" and pieza != "tB":
-        print("No hay una torre blanca en la posición inicial.")
-        return False
-    if turno == "negras" and pieza != "tN":
-        print("No hay una torre negra en la posición inicial.")
-        return False
 
     # Validamos movimiento: recto en filas o columnas
     if fila_inicial != fila_final and col_inicial != col_final:
@@ -198,14 +178,6 @@ def mover_alfil(tablero, letra, pos_inicial, pos_final, turno):
 
     pieza = tablero[fila_inicial][col_inicial]
 
-    # Verificamos que la pieza sea un alfil del turno correcto
-    if turno == "blancas" and pieza != "aB":
-        print("No hay un alfil blanco en la posición inicial.")
-        return False
-    if turno == "negras" and pieza != "aN":
-        print("No hay un alfil negro en la posición inicial.")
-        return False
-
     # Validar que el movimiento sea en diagonal
     if abs(fila_final - fila_inicial) != abs(col_final - col_inicial):
         print("El alfil sólo se mueve en diagonal.")
@@ -237,14 +209,6 @@ def mover_dama(tablero, letra, pos_inicial, pos_final, turno):
     fila_final = 8 - int(pos_final[1])
 
     pieza = tablero[fila_inicial][col_inicial]
-
-    # Verificamos que la pieza sea una dama del turno correcto
-    if turno == "blancas" and pieza != "dB":
-        print("No hay una dama blanca en la posición inicial.")
-        return False
-    if turno == "negras" and pieza != "dN":
-        print("No hay una dama negra en la posición inicial.")
-        return False
 
     # Movimiento tipo torre
     if fila_inicial == fila_final or col_inicial == col_final:
@@ -299,14 +263,6 @@ def mover_caballo(tablero, letra, pos_inicial, pos_final, turno):
     fila_final = 8 - int(pos_final[1])
 
     pieza = tablero[fila_inicial][col_inicial]
-
-    # Verificamos que la pieza sea un caballo del turno correcto
-    if turno == "blancas" and pieza != "cB":
-        print("No hay un caballo blanco en la posición inicial.")
-        return False
-    if turno == "negras" and pieza != "cN":
-        print("No hay un caballo negro en la posición inicial.")
-        return False
 
     # Movimientos válidos en L
     delta_fila = abs(fila_final - fila_inicial)
@@ -373,7 +329,7 @@ def init():
     turno = "blancas"  # Asignamos turno porque lo usa mover_peon
 
     # Pedimos movimientos
-    pieza_inicial = pieza_a_mover(letra)      # <<< CAMBIÉ NOMBRE
+    pieza_inicial = pieza_a_mover(letra)
     coordenada_destino = coordenadas_a_mover(letra)
     # tablero[6][]='.'
     mover_peon(tablero, letra, pieza_inicial, coordenada_destino, turno)
