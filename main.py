@@ -22,8 +22,8 @@ def mostrar_tablero(tablero):
     letras = ["a", "b", "c", "d", "e", "f", "g", "h"]
 
     print("    ", end="")  # Espacio inicial para alinear las letras
-    for letra in letras:
-        print(f"{letra:4}", end="")  # Imprime las letras de columna
+    for columna in letras:
+        print(f"{columna:4}", end="")  # Imprime las letras de las columnas
     print()
 
     for i, fila in enumerate(tablero):
@@ -34,7 +34,7 @@ def mostrar_tablero(tablero):
     print()
 
 
-def pieza_a_mover(letra):    # Valida si la pieza a mover está dentro de los parametros del tablero,
+def pieza_a_mover():    # Solicita y valida si la pieza a mover está dentro de los parametros del tablero,
     piezas_posibles = ("T", "C", "A", "D", "R", "P")                        # y el formato.
     while True:
         pos_pieza = input("Ingrese la inicial y la posición de la pieza que quiere mover (ejemplo: Cb1): ")
@@ -47,57 +47,49 @@ def pieza_a_mover(letra):    # Valida si la pieza a mover está dentro de los pa
         elif not pos_pieza[2].isdigit() or int(pos_pieza[2]) < 1 or int(pos_pieza[2]) > 8:
             print("Error: Fila inválida.")
         else:
-            return pos_pieza
+            return pos_pieza                     # Sale de la función únicamente cuando se validan los valores ingresados. 
 
-def corroborrar_pos_pieza_a_mover(letra, turno, posicion_pieza, tablero):
+
+def corroborrar_pos_pieza_a_mover(turno, posicion_pieza, tablero):
     pieza = posicion_pieza[:1].lower() + turno[:1].upper()
     columna = posicion_pieza[1:2].lower()
     fila = int(posicion_pieza[2:])
     if pieza == tablero[8 - fila][letra[columna]]:
         return
     else:
-        print("La pieza ingresada no se encuentra en esa posición")
-        pieza_a_mover(letra)
+        print("La pieza ingresada no se encuentra en esa posición")      
+        pieza_a_mover()                                           # Vuelve a la función pieza a mover en este caso.
+        
 
-def puede_comer(destino, turno, pieza):
-    if turno == "blancas" and destino.endswith("B"):
-        print("No podés capturar tus propias piezas.")
-        return False
-    elif turno == "negras" and destino.endswith("N"):
-        print("No podés capturar tus propias piezas.")
-        return False
-    print(f"¡{pieza} capturó a {destino}!")   # Se capturó una pieza
-    return True
+def coordenadas_a_mover():
+    while True:
+        movimiento = input("Ingrese la casilla a la que quiere mover (ejemplo: e5): ")
+        if not validar_longitud(movimiento):
+            print("Error: La longitud de la entrada debe ser 2.")
+        elif not validar_columna(movimiento):
+            print("Error: Columna inválida.")
+        elif not validar_fila(movimiento):
+            print("Error: Fila inválida.")
+        else:                                                      # Sale de la función únicamente cuando se validan los valores ingresados.
+            return letra.get(movimiento[0]), 8 - int(movimiento[1])   
 
 
-def mover_rey(tablero, letra, pos_inicial, pos_final, turno):
-    col_inicial = letra[pos_inicial[1].lower()]
-    fila_inicial = 8 - int(pos_inicial[2])
-
-    col_final = pos_final[0]
-    fila_final = pos_final[1]
-
-    pieza = tablero[fila_inicial][col_inicial]
-    destino = tablero[fila_final][col_final]
-
-    # Verificar que el movimiento sea de una sola casilla en cualquier dirección
-    delta_fila = abs(fila_final - fila_inicial)
-    delta_col = abs(col_final - col_inicial)
-
-    if delta_fila <= 1 and delta_col <= 1 and (delta_fila != 0 or delta_col != 0):
-        if destino != ".":
-            if not puede_comer(destino, turno, pieza):
-                return False
-        # Movimiento válido: actualizar el tablero
-        tablero[fila_final][col_final] = pieza
-        tablero[fila_inicial][col_inicial] = "."
-        return True
+def posibles_movimientos(tablero, posicion_pieza, pos_final, turno): # Deriva a la función de movimiento de pieza correspondiente (según la pieza a mover).
+    if posicion_pieza[0].upper() == "P":
+        return mover_peon(tablero, posicion_pieza, pos_final, turno)  # Las funciones a las que derivan devuelven True o False
+    elif posicion_pieza[0].upper() == "C":                              # dependiendo de si fue posible o no el movimiento.
+        return mover_caballo(tablero, posicion_pieza, pos_final, turno)    
+    elif posicion_pieza[0].upper() == "A":                              # En caso de ser False, en la función principal se volverá a ejecutar el bloque while.
+        return mover_alfil(tablero, posicion_pieza, pos_final, turno) # De ser True, continua con normalidad, y el tablero ya fue actualzido
+    elif posicion_pieza[0].upper() == "D":                              # en la función de los movimientos de la pieza.
+        return mover_dama(tablero, posicion_pieza, pos_final, turno)
+    elif posicion_pieza[0].upper() == "T":
+        return mover_torre(tablero, posicion_pieza, pos_final, turno)
     else:
-        print("Movimiento inválido para el rey (sólo una casilla).")
-        return False
+        return mover_rey(tablero, posicion_pieza, pos_final, turno)
 
 
-def mover_peon(tablero, letra, pos_inicial, pos_final, turno):
+def mover_peon(tablero, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]  
     fila_inicial = 8 - int(pos_inicial[2])       
 
@@ -168,13 +160,39 @@ def mover_peon(tablero, letra, pos_inicial, pos_final, turno):
             return False
 
 
-
-def mover_torre(tablero, letra, pos_inicial, pos_final, turno):
+def mover_caballo(tablero, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]
     fila_inicial = 8 - int(pos_inicial[2])
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
+
+    pieza = tablero[fila_inicial][col_inicial]
+    destino = tablero[fila_final][col_final]
+
+    # Movimientos válidos en L
+    delta_fila = abs(fila_final - fila_inicial)
+    delta_col = abs(col_final - col_inicial)
+
+    if (delta_fila, delta_col) in ((2, 1), (1, 2)):
+        if destino != ".":
+            if not puede_comer(destino, turno, pieza):
+                return False
+        # Movimiento válido: actualizar el tablero
+        tablero[fila_final][col_final] = pieza
+        tablero[fila_inicial][col_inicial] = "."
+        return True
+    else:
+        print("Movimiento inválido para el caballo.")
+        return False
+
+
+def mover_torre(tablero, pos_inicial, pos_final, turno):
+    col_inicial = letra[pos_inicial[1].lower()]
+    fila_inicial = 8 - int(pos_inicial[2])
+
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
 
     pieza = tablero[fila_inicial][col_inicial]
     destino = tablero[fila_final][col_final]
@@ -210,12 +228,12 @@ def mover_torre(tablero, letra, pos_inicial, pos_final, turno):
     return True
 
 
-def mover_alfil(tablero, letra, pos_inicial, pos_final, turno):
+def mover_alfil(tablero, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]
     fila_inicial = 8 - int(pos_inicial[2])
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
 
     pieza = tablero[fila_inicial][col_inicial]
     destino = tablero[fila_final][col_final]
@@ -248,12 +266,12 @@ def mover_alfil(tablero, letra, pos_inicial, pos_final, turno):
     return True
 
 
-def mover_dama(tablero, letra, pos_inicial, pos_final, turno):
+def mover_dama(tablero, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]
     fila_inicial = 8 - int(pos_inicial[2])
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
 
     pieza = tablero[fila_inicial][col_inicial]
     destino = tablero[fila_final][col_final]
@@ -311,21 +329,21 @@ def mover_dama(tablero, letra, pos_inicial, pos_final, turno):
         return False
 
 
-def mover_caballo(tablero, letra, pos_inicial, pos_final, turno):
+def mover_rey(tablero, pos_inicial, pos_final, turno):
     col_inicial = letra[pos_inicial[1].lower()]
     fila_inicial = 8 - int(pos_inicial[2])
 
-    col_final = letra[pos_final[0].lower()]
-    fila_final = 8 - int(pos_final[1])
+    col_final = pos_final[0]
+    fila_final = pos_final[1]
 
     pieza = tablero[fila_inicial][col_inicial]
     destino = tablero[fila_final][col_final]
 
-    # Movimientos válidos en L
+    # Verificar que el movimiento sea de una sola casilla en cualquier dirección
     delta_fila = abs(fila_final - fila_inicial)
     delta_col = abs(col_final - col_inicial)
 
-    if (delta_fila, delta_col) in ((2, 1), (1, 2)):
+    if delta_fila <= 1 and delta_col <= 1 and (delta_fila != 0 or delta_col != 0):
         if destino != ".":
             if not puede_comer(destino, turno, pieza):
                 return False
@@ -334,81 +352,60 @@ def mover_caballo(tablero, letra, pos_inicial, pos_final, turno):
         tablero[fila_inicial][col_inicial] = "."
         return True
     else:
-        print("Movimiento inválido para el caballo.")
+        print("Movimiento inválido para el rey (sólo una casilla).")
         return False
 
 
-def posibles_movimientos(posicion_pieza, tablero):     # Deriva a la función correspondiente según la pieza a mover.
-    if posicion_pieza[0].upper() == "P":
-        return mover_peon(posicion_pieza, tablero)
-    elif posicion_pieza[0].upper() == "C":
-        return mover_torre(posicion_pieza, tablero)
-    elif posicion_pieza[0].upper() == "A":
-        return mov_alfil(posicion_pieza, tablero)
-    elif posicion_pieza[0].upper() == "D":
-        return mov_dama(posicion_pieza, tablero)
-    elif posicion_pieza[0].upper() == "T":
-        return mover(posicion_pieza, tablero)
-    else:
-        return mov_rey(posicion_pieza, tablero)
-
-def coordenadas_a_mover(letra):
-    while True:
-        movimiento = input("Ingrese la casilla a la que quiere mover (ejemplo: e5): ")
-        if not validar_longitud(movimiento):
-            print("Error: La longitud de la entrada debe ser 2.")
-        elif not validar_columna(movimiento, letra):
-            print("Error: Columna inválida.")
-        elif not validar_fila(movimiento):
-            print("Error: Fila inválida.")
-        else:
-            return letra.get(movimiento[0]), 8 - int(movimiento[1])
+def puede_comer(destino, turno, pieza):
+    if turno == "blancas" and destino.endswith("B"):
+        print("No podés capturar tus propias piezas.")
+        return False
+    elif turno == "negras" and destino.endswith("N"):
+        print("No podés capturar tus propias piezas.")
+        return False
+    print(f"¡{pieza} capturó a {destino}!")   # Se capturó una pieza
+    return True
 
 
 
-    return letra.get(movimiento[0]), movimiento[1]
-    # El número va a ser lo que le falta para llegar a 8, ejemplo: a5 --> tomaría la columna 0 por "a" y la fila 3 (8 - 5).
-
-
-def init():
+def inicializacion():
+    print("Hay que poner un archivo explicando muchas cosas")
+    print()
+    print()
     tablero = crear_tablero()
     posicion_inicial(tablero)
-    mostrar_tablero(tablero)
+    
 
-    letra = {
-        "a" : 0,
-        "b" : 1,
-        "c" : 2,
-        "d" : 3,
-        "e" : 4,
-        "f" : 5,
-        "g" : 6,
-        "h" : 7
-    }
-
-    turno = "blancas"  # Asignamos turno porque lo usa mover_peon
-
-    # Pedimos movimientos
-    pieza_inicial = pieza_a_mover(letra)
-    coordenada_destino = coordenadas_a_mover(letra)
-    # tablero[6][]='.'
-    mover_peon(tablero, letra, pieza_inicial, coordenada_destino, turno)
-    mostrar_tablero(tablero)
-
-    # contador = 0
-    # seguir_jugando = True
-    #
-    # while seguir_jugando:
-    #     if contador % 2 == 0:
-    #         turno = "blancas"
-    #     else:
-    #         turno = "negras"
-    #     print(f"Juegan las {turno}")
-    #     contador += 1
-    #     posicion_pieza = pieza_a_mover(letra)
-    #     corroborrar_pos_pieza_a_mover(letra, turno, posicion_pieza, tablero)
+    contador = 0
+    seguir_jugando = True
+    while seguir_jugando:
+        mostrar_tablero(tablero)
+        if contador % 2 == 0:
+            turno = "blancas"
+        else:
+            turno = "negras"
+        
+    
+        print(f"Juegan las {turno}")
+        
+        pos_inical_pieza = pieza_a_mover()       # Solicitamos que ingrese la pieza a mover junto con la posición en la que se encuentra.
+        corroborrar_pos_pieza_a_mover(turno, pos_inical_pieza, tablero)  # Verificamos que efectivamente este en esa posición.
+        posicion_final = coordenadas_a_mover()                      # Solicitamos la casilla a donde se va a mover la pieza elegida.
+        if not posibles_movimientos(tablero, pos_inical_pieza, posicion_final, turno):
+            print("Vamos de vuelta")    # Funcionón que identifica la pieza a mover y deriva a la función de los movimientos de esa pieza.
+            continue                    # De no poderse realizar el movimiento devuelve False y se vuelve a ejecutar el bloque (sin sumar contador)
+        contador += 1
 
 
+letra = {
+    "a" : 0,
+    "b" : 1,
+    "c" : 2,
+    "d" : 3,
+    "e" : 4,
+    "f" : 5,
+    "g" : 6,
+    "h" : 7
+}
 
-
-init()
+inicializacion()
