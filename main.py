@@ -12,8 +12,8 @@ def crear_tablero():
 
 def posicion_inicial(tablero):
     tablero[0] = list(fila_piezas_negras)
-    tablero[1] = ["pN"] * 8
-    tablero[6] = ["pB"] * 8
+    tablero[1] = ["Pn"] * 8
+    tablero[6] = ["Pb"] * 8
     tablero[7] = list(fila_piezas_blancas)
     return tablero
 
@@ -51,7 +51,7 @@ def pieza_a_mover():    # Solicita y valida si la pieza a mover está dentro de 
 
 
 def corroborrar_pos_pieza_a_mover(turno, posicion_pieza, tablero):
-    pieza = posicion_pieza[:1].lower() + turno[:1].upper()
+    pieza = posicion_pieza[:1].upper() + turno[:1].lower()
     columna = posicion_pieza[1:2].lower()
     fila = int(posicion_pieza[2:])
     if pieza == tablero[8 - fila][letra[columna]]:
@@ -104,13 +104,13 @@ def mover_peon(tablero, pos_inicial, pos_final, turno):
     if turno == "blancas":
         if col_inicial == col_final:
             if fila_final == fila_inicial - 1 and tablero[fila_final][col_final] == ".":
-                tablero[fila_final][col_final] = "pB"
+                tablero[fila_final][col_final] = "Pb"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
 
             # En el primer movimiento del peon puede avanzar 2 casillas
             elif fila_inicial == 6 and fila_final == fila_inicial - 2 and tablero[fila_inicial-1][col_inicial] == "." and tablero[fila_final][col_final] == ".":
-                tablero[fila_final][col_final] = "pB"
+                tablero[fila_final][col_final] = "Pn"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
             else:
@@ -134,13 +134,13 @@ def mover_peon(tablero, pos_inicial, pos_final, turno):
     elif turno == "negras":
         if col_inicial == col_final:
             if fila_final == fila_inicial + 1 and tablero[fila_final][col_final] == ".":
-                tablero[fila_final][col_final] = "pN"
+                tablero[fila_final][col_final] = "Pn"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
 
             # En el primer movimiento del peon puede avanzar 2 casillas
             elif fila_inicial == 1 and fila_final == fila_inicial + 2 and tablero[fila_inicial+1][col_inicial] == "." and tablero[fila_final][col_final] == ".":
-                tablero[fila_final][col_final] = "pN"
+                tablero[fila_final][col_final] = "Pb"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
             else:
@@ -358,10 +358,10 @@ def mover_rey(tablero, pos_inicial, pos_final, turno):
 
 
 def puede_comer(destino, turno, pieza):
-    if turno == "blancas" and destino.endswith("B"):
+    if turno == "blancas" and destino.endswith("b"):
         print("No podés capturar tus propias piezas.")
         return False
-    elif turno == "negras" and destino.endswith("N"):
+    elif turno == "negras" and destino.endswith("n"):
         print("No podés capturar tus propias piezas.")
         return False
     print(f"¡{pieza} capturó a {destino}!")   # Se capturó una pieza
@@ -370,10 +370,10 @@ def puede_comer(destino, turno, pieza):
 
 def finalizacion_juego(tablero, turno):       # Finaliza el juego si no se encuentra el rey enemigo en el tablero.
     if turno == "blancas":                    # Fue caputrado.
-        color_oponente = "N"
+        color_oponente = "n"
     else:
-        color_oponente = "B"
-    rey = "r" + color_oponente
+        color_oponente = "b"
+    rey = "R" + color_oponente
     for fila in range(8):
         for columna in range(8):
             if tablero[fila][columna] == rey:
