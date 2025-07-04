@@ -19,7 +19,7 @@ def posicion_inicial(tablero):
 
 
 def mostrar_tablero(tablero):
-    letras = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    letras = ["A", "B", "C", "D", "E", "F", "G", "H"]
 
     print("    ", end="")  # Espacio inicial para alinear las letras
     for columna in letras:
@@ -37,7 +37,7 @@ def mostrar_tablero(tablero):
 def pieza_a_mover():    # Solicita y valida si la pieza a mover está dentro de los parametros del tablero,
     piezas_posibles = ("T", "C", "A", "D", "R", "P")                        # y el formato.
     while True:
-        pos_pieza = input("Ingrese la inicial y la posición de la pieza que quiere mover (ejemplo: Cb1): ")
+        pos_pieza = input("Ingrese la inicial de la pieza que quiere mover (letra), la columna en donde está (letra) y la fila (número) (ejemplo: Pe2): ")
         if len(pos_pieza) != 3:
             print("Error: La longitud de la entrada debe ser 3.")
         elif pos_pieza[0].upper() not in piezas_posibles:
@@ -63,7 +63,8 @@ def corroborrar_pos_pieza_a_mover(turno, posicion_pieza, tablero):
 
 def coordenadas_a_mover():
     while True:
-        movimiento = input("Ingrese la casilla a la que quiere mover (ejemplo: e5): ")
+        movimiento = input("Ingrese la casilla a la que quiere mover (ejemplo: e4): ")
+        print()
         if not validar_longitud(movimiento):
             print("Error: La longitud de la entrada debe ser 2.")
         elif not validar_columna(movimiento):
@@ -367,9 +368,21 @@ def puede_comer(destino, turno, pieza):
     return True
 
 
+def finalizacion_juego(tablero, turno):       # Finaliza el juego si no se encuentra el rey enemigo en el tablero.
+    if turno == "blancas":                    # Fue caputrado.
+        color_oponente = "N"
+    else:
+        color_oponente = "B"
+    rey = "r" + color_oponente
+    for fila in range(8):
+        for columna in range(8):
+            if tablero[fila][columna] == rey:
+                return False
+    return True
+
 
 def inicializacion():
-    print("Hay que poner un archivo explicando muchas cosas")
+    print("Acá va un archivo explicando muchas cosas")
     print()
     print()
     tablero = crear_tablero()
@@ -377,8 +390,7 @@ def inicializacion():
     
 
     contador = 0
-    seguir_jugando = True
-    while seguir_jugando:
+    while True:
         mostrar_tablero(tablero)
         if contador % 2 == 0:
             turno = "blancas"
@@ -386,14 +398,18 @@ def inicializacion():
             turno = "negras"
         
     
-        print(f"Juegan las {turno}")
+        print(f"Juegan las {turno}\n")
         
         pos_inical_pieza = pieza_a_mover()       # Solicitamos que ingrese la pieza a mover junto con la posición en la que se encuentra.
         corroborrar_pos_pieza_a_mover(turno, pos_inical_pieza, tablero)  # Verificamos que efectivamente este en esa posición.
         posicion_final = coordenadas_a_mover()                      # Solicitamos la casilla a donde se va a mover la pieza elegida.
         if not posibles_movimientos(tablero, pos_inical_pieza, posicion_final, turno):
-            print("Vamos de vuelta")    # Funcionón que identifica la pieza a mover y deriva a la función de los movimientos de esa pieza.
-            continue                    # De no poderse realizar el movimiento devuelve False y se vuelve a ejecutar el bloque (sin sumar contador)
+            print("Vamos de vuelta\n")    # Funcionón que identifica la pieza a mover y deriva a la función de los movimientos de esa pieza.
+            continue                    # De no poderse realizar el movimiento devuelve False y se vuelve a ejecutar el bloque (sin sumar contador).
+        if finalizacion_juego(tablero, turno):
+            mostrar_tablero(tablero)
+            print(f"Finalizo el juego, ganaron las {turno}")
+            break                                # Finaliza el juego si no se encuentra el rey enemigo en el tablero.
         contador += 1
 
 
