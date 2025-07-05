@@ -110,7 +110,7 @@ def mover_peon(tablero, pos_inicial, pos_final, turno):
 
             # En el primer movimiento del peon puede avanzar 2 casillas
             elif fila_inicial == 6 and fila_final == fila_inicial - 2 and tablero[fila_inicial-1][col_inicial] == "." and tablero[fila_final][col_final] == ".":
-                tablero[fila_final][col_final] = "Pn"
+                tablero[fila_final][col_final] = "Pb"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
             else:
@@ -140,7 +140,7 @@ def mover_peon(tablero, pos_inicial, pos_final, turno):
 
             # En el primer movimiento del peon puede avanzar 2 casillas
             elif fila_inicial == 1 and fila_final == fila_inicial + 2 and tablero[fila_inicial+1][col_inicial] == "." and tablero[fila_final][col_final] == ".":
-                tablero[fila_final][col_final] = "Pb"
+                tablero[fila_final][col_final] = "Pn"
                 tablero[fila_inicial][col_inicial] = "."
                 return True
             else:
