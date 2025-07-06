@@ -67,7 +67,7 @@ def coordenadas_a_mover():
         print()
         if not validar_longitud(movimiento):
             print("Error: La longitud de la entrada debe ser 2.")
-        elif not validar_columna(movimiento):
+        elif not validar_columna(movimiento, letra):
             print("Error: Columna inválida.")
         elif not validar_fila(movimiento):
             print("Error: Fila inválida.")
