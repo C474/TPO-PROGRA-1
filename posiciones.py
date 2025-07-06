@@ -1,2 +1,2 @@
-fila_piezas_negras = ("tN", "cN", "aN", "dN", "rN", "aN", "cN", "tN")
-fila_piezas_blancas = ("tB", "cB", "aB", "dB", "rB", "aB", "cB", "tB")
+fila_piezas_negras = ("Tn", "Cn", "An", "Dn", "Rn", "An", "Cn", "Tn")
+fila_piezas_blancas = ("Tb", "Cb", "Ab", "Db", "Rb", "Ab", "Cb", "Tb")
