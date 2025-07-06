@@ -20,21 +20,6 @@ def posicion_inicial(tablero):
     return tablero
 
 
-# def mostrar_tablero(tablero):
-#     letras = ["A", "B", "C", "D", "E", "F", "G", "H"]
-#
-#     print("    ", end="")  # Espacio inicial para alinear las letras
-#     for columna in letras:
-#         print(f"{columna:4}", end="")  # Imprime las letras de las columnas
-#     print()
-#
-#     for i, fila in enumerate(tablero):
-#         print(f"{8 - i}  ", end="")  # Imprime el número de fila (8 a 1)
-#         for casilla in fila:
-#             print(f"{casilla:4}", end="")
-#         print()
-#     print()
-
 def mostrar_tablero(tablero, marcadas=None):
     if marcadas is None:
         marcadas = []
