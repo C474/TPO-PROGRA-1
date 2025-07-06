@@ -1,7 +1,7 @@
 import copy
 
 from validaciones import validar_longitud, validar_columna, validar_fila
-
+from guardado import guardar_partida, cargar_partida
 from posiciones import fila_piezas_negras, fila_piezas_blancas
 
 def crear_tablero():
@@ -597,57 +597,70 @@ def convertir_a_notacion(posiciones):
     letra_inv = {v: k for k, v in letra.items()}
     return [f"{letra_inv[col]}{8 - fila}" for fila, col in posiciones]
 
-def inicializacion():
-    """
-    Función principal que inicializa y ejecuta el juego de ajedrez.
-    
-    Responsabilidades:
-    - Configurar el modo de juego (con o sin ayudas)
-    - Crear y configurar el tablero inicial
-    - Ejecutar el bucle principal del juego
-    - Manejar turnos alternados entre blancas y negras
-    - Verificar condiciones de finalización del juego
-    """
+
+def elegir_ayuda():
     print("¿Desea jugar con ayudas para ver los movimientos posibles?")
     print("1. Sí")
     print("2. No")
     eleccion = input("Seleccione una opción (1 o 2): ")
-    ayuda = eleccion == "1"
-    # print("Acá va un archivo explicando muchas cosas")
-    # print()
-    # print()
-    tablero = crear_tablero()
-    posicion_inicial(tablero)
-    
+    return eleccion == "1"
 
-    contador = 0
+
+def inicializacion():
+    print("¿Desea retomar una partida guardada?")
+    print("1. Sí")
+    print("2. No")
+    eleccion = input("Seleccione una opción (1 o 2): ").strip()
+
+    if eleccion == "1":
+        nombre_partida = input("Ingrese el nombre de la partida: ").strip()
+        partida = cargar_partida(nombre_partida)
+        if partida:
+            tablero = partida["tablero"]
+            ayuda = partida["ayuda"]
+            contador = partida["contador"]
+        else:
+            print("Iniciando nueva partida.\n")
+            tablero = crear_tablero()
+            posicion_inicial(tablero)
+            ayuda = elegir_ayuda()
+            contador = 0
+    else:
+        nombre_partida = input("Asigne un nombre a la nueva partida: ").strip()
+        tablero = crear_tablero()
+        posicion_inicial(tablero)
+        ayuda = elegir_ayuda()
+        contador = 0
+
     while True:
         mostrar_tablero(tablero)
-        if contador % 2 == 0:
-            turno = "blancas"
-        else:
-            turno = "negras"
-        
-    
+        turno = "blancas" if contador % 2 == 0 else "negras"
         print(f"Juegan las {turno}\n")
-        
-        pos_inical_pieza = pieza_a_mover()       # Solicitamos que ingrese la pieza a mover junto con la posición en la que se encuentra.
+
+        pos_inical_pieza = pieza_a_mover()
         if ayuda:
             movimientos_validos = obtener_movimientos_validos(tablero, pos_inical_pieza, turno)
             if movimientos_validos:
                 print("Movimientos posibles:")
                 mostrar_tablero(tablero, marcadas=movimientos_validos)
                 print("Opciones:", ", ".join(convertir_a_notacion(movimientos_validos)))
-        corroborrar_pos_pieza_a_mover(turno, pos_inical_pieza, tablero)  # Verificamos que efectivamente este en esa posición.
-        posicion_final = coordenadas_a_mover()                      # Solicitamos la casilla a donde se va a mover la pieza elegida.
+
+        corroborrar_pos_pieza_a_mover(turno, pos_inical_pieza, tablero)
+        posicion_final = coordenadas_a_mover()
+
         if not posibles_movimientos(tablero, pos_inical_pieza, posicion_final, turno):
-            print("Vamos de vuelta\n")    # Funcionón que identifica la pieza a mover y deriva a la función de los movimientos de esa pieza.
-            continue                    # De no poderse realizar el movimiento devuelve False y se vuelve a ejecutar el bloque (sin sumar contador).
+            print("Movimiento inválido. Intente de nuevo.\n")
+            continue
+
         if finalizacion_juego(tablero, turno):
             mostrar_tablero(tablero)
-            print(f"Finalizo el juego, ganaron las {turno}")
-            break                                # Finaliza el juego si no se encuentra el rey enemigo en el tablero.
+            print(f"🏆 ¡Finalizó el juego! Ganaron las {turno}.\n")
+            break
+
         contador += 1
+
+        # Guardado automático
+        guardar_partida(nombre_partida, tablero, ayuda, contador)
 
 
 # Diccionario para convertir letras de columna a índices numéricos
