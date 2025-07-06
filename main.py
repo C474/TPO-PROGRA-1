@@ -25,7 +25,7 @@ def mostrar_tablero(tablero, marcadas=None):
         marcadas = []
 
     letras = ["A", "B", "C", "D", "E", "F", "G", "H"]
-
+    # Imprime el número de fila (8 a 1)
     print("    ", end="")
     for columna in letras:
         print(f"{columna:4}", end="")
