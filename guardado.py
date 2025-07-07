@@ -18,8 +18,8 @@ def guardar_partida(nombre_partida, tablero, ayuda, contador):
             with open(NOMBRE_ARCHIVO_PARTIDAS, "r") as archivo:
                 partidas = json.load(archivo)
         except json.JSONDecodeError:
-                # El archivo existe pero está vacío o corrupto: empieza con lista vacía
-                partidas = []
+            # El archivo existe pero está vacío o corrupto: empieza con lista vacía
+            partidas = []
         except Exception as e:
             print(f"No se pudo leer el archivo: {e}")
             partidas = []
